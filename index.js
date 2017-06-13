@@ -17,7 +17,6 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
             super();
             this.name('SlideMenu');
             this.prmOpt(prm_opt);
-            this.vdom();
         } catch (e) {
             console.error(e.stack);
             throw e;
@@ -41,14 +40,11 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
             
             /* set contents config */
             this.target(conts);
-//console.log(conts);
-//console.log(this.target());
-//            this.style({
-//                width    : this.elemSize()[0] + 'px',
-//                height   : '100%',
-//                position : 'relative',
-//                left     : '-' + this.elemSize()[0] + 'px'
-//            });
+            this.styleTgt(conts);
+            this.style({
+                height   : '100%',
+                width    : this.elemSize()[0] + 'px'
+            });
             this.addEffect(
                 this.posEffect(),
                 false
@@ -94,7 +90,6 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
                     smb
                 );
             }
-            
             smb.addEvent(
                 new mofron.event.Focus(
                     (flg, tgt, prm) => {
@@ -108,7 +103,6 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
                     this.posEffect()
                 )
             );
-            
             this.m_simbol = smb;
         } catch (e) {
             console.error(e.stack);
@@ -140,6 +134,30 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
                 return;
             }
             super.setSizeComp(cmp);
+        } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    getClickEvent () {
+        try {
+            if (1 === this.child().length) {
+                return new mofron.event.Click();
+            }
+            return super.getClickEvent();
+        } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    selectIdx (idx, evt) {
+        try {
+            let ret = super.selectIdx(idx, evt);
+            if (undefined !== ret) {
+                return ret - 1;
+            }
         } catch (e) {
             console.error(e.stack);
             throw e;
