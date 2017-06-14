@@ -49,6 +49,7 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
                 this.posEffect(),
                 false
             );
+
         } catch (e) {
             console.error(e.stack);
             throw e;
@@ -84,25 +85,26 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
             if (false === mofron.func.isInclude(smb, 'Component')) {
                 throw new Error('invalid parameter');
             }
+
             if (undefined !== this.m_simbol) {
                 this.updChild(
                     this.m_simbol,
                     smb
                 );
+                
+                let focus = new mofron.event.Focus(
+                                (flg, tgt, prm) => {
+                                    try {
+                                        prm.execute(flg);
+                                    } catch (e) {
+                                        console.error(e.stack);
+                                        throw e;
+                                    }
+                                },
+                                this.posEffect()
+                            );
+                smb.addEvent(focus);
             }
-            smb.addEvent(
-                new mofron.event.Focus(
-                    (flg, tgt, prm) => {
-                        try {
-                            prm.execute(flg);
-                        } catch (e) {
-                            console.error(e.stack);
-                            throw e;
-                        }
-                    },
-                    this.posEffect()
-                )
-            );
             this.m_simbol = smb;
         } catch (e) {
             console.error(e.stack);
@@ -114,6 +116,7 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
         try {
             let ret = super.elemSize(x, y);
             if (undefined === ret) {
+                /* setter*/
                 if ('number' !== typeof x) {
                     throw new Error('invalid parameter');
                 }

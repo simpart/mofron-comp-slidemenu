@@ -1,6 +1,6 @@
 {
   "name": "mofron-comp-slidemenu",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "slide-menu component for mofron",
   "main": "index.js",
   "scripts": {
