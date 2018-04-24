@@ -2,21 +2,22 @@
  * @file   mofron-comp-slidemenu/index.js
  * @author simpart
  */
-require('mofron-comp-menu');
-require('mofron-effect-position');
-require('mofron-event-focus');
+let mf = require('mofron');
+let Focus = require('mofron-event-focus');
+let Posit = require('mofron-effect-position');
+let Menu = require('mofron-comp-menu');
 
 /**
  * @class mofron.comp.SlideMenu
  * @brief slide-menu component for mofron
  */
-mofron.comp.SlideMenu = class extends mofron.comp.Menu {
+mofron.comp.SlideMenu = class extends Menu {
     
-    constructor (prm_opt) {
+    constructor (po) {
         try {
             super();
             this.name('SlideMenu');
-            this.prmOpt(prm_opt);
+            this.prmOpt(po);
         } catch (e) {
             console.error(e.stack);
             throw e;
@@ -30,136 +31,161 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
      */
     initDomConts (prm) {
         try {
-            let simb  = new mofron.Dom('div', this);
-            let conts = new mofron.Dom('div', this);
-            this.vdom().child([ simb, conts ]);
+            super.initDomConts();
+            this.target().style({'height' : '100%',});
             
-            /* set simbol */
-            this.target(simb);
-            this.addChild(this.simbol());
-            
-            /* set contents config */
-            this.target(conts);
-            this.styleTgt(conts);
-            this.style({
-                height   : '100%',
-                width    : this.elemSize()[0] + 'px'
-            });
-            this.addEffect(
-                this.posEffect(),
-                false
-            );
+            /* menu switch */
+            this.addChild(new mf.Component(), undefined, false);
 
+            /* contents */
+            let posit = new Posit({
+                type      : ['relative', 'left'],
+                defStatus : false
+            });
+            let conts = new mf.Component({
+                height    : '100%',
+                style     : {
+                    'border-right' : 'solid 1px rgb(190,190,190)'
+                },
+                addChild  : new mf.Component({  /* offset */
+                    style : {'margin-top' : '1px'}
+                }),
+                addEffect : posit
+            });
+            this.addChild(conts, undefined, false);
+            this.target(conts.target());
+            this.width(250);
+
+            posit.value([
+                ('number' === typeof this.width()) ? (0 - this.width()) : '-'+this.width(),
+                0
+            ]);
+            
+            this.color(new mf.Color(255,255,255));
+            
+            
         } catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
     
-    posEffect () {
+    height (prm) {
         try {
-            if (undefined === this.m_poseff) {
-                this.m_poseff = new mofron.effect.Position({
-                    speed      : 0.6,
-                    disableVal : new mofron.Param('left', '-' + this.elemSize()[0] + 'px'),
-                    enableVal  : new mofron.Param('left', 0)
-                });
-            }
-            return this.m_poseff;
-        } catch (e) {
-            console.error(e.stack);
-            throw e;
-        }
-    }
-    
-    simbol (smb) {
-        try {
-            if (undefined === smb) {
+            if (undefined === prm) {
                 /* getter */
-                if (undefined === this.m_simbol) {
-                    this.simbol(new mofron.Component());
-                }
-                return this.m_simbol;
+                return (undefined === this.m_height) ? null : this.m_height;
             }
             /* setter */
-            if (false === mofron.func.isInclude(smb, 'Component')) {
+            if ( ('number' !== typeof prm) && ('string' !== typeof prm) ) {
                 throw new Error('invalid parameter');
             }
-
-            if (undefined !== this.m_simbol) {
-                this.updChild(
-                    this.m_simbol,
-                    smb
-                );
-                
-                let focus = new mofron.event.Focus(
-                                (flg, tgt, prm) => {
-                                    try {
-                                        prm.execute(flg);
-                                    } catch (e) {
-                                        console.error(e.stack);
-                                        throw e;
-                                    }
-                                },
-                                this.posEffect()
-                            );
-                smb.addEvent(focus);
-            }
-            this.m_simbol = smb;
+            this.m_height = prm;
+            this.setMenuConf();
         } catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
     
-    elemSize (x, y) {
+    setMenuConf (cmp) {
         try {
-            let ret = super.elemSize(x, y);
-            if (undefined === ret) {
-                /* setter*/
-                if ('number' !== typeof x) {
-                    throw new Error('invalid parameter');
+            if (undefined === cmp) {
+                /* set all contents */
+                let chd = this.child()[1].child();
+                for (let cidx in chd) {
+                    if (0 === cidx) {
+                        continue;
+                    }
+                    super.setMenuConf(chd[cidx]);
                 }
-                this.style({
-                    left     : '-' + x + 'px'
+            } else {
+                super.setMenuConf(cmp);
+            }
+        } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    switch (prm) {
+        try {
+            if (undefined === prm) {
+                /* getter */
+                return this.child()[0].child();
+            }
+            let sld = this;
+            prm.addEvent(
+                new Focus(
+                    (flg, tgt) => {
+                        try {
+                            let pos = sld.child()[1].getConfig('effect', 'Position');
+                            if (null !== pos) {
+                                pos.speed(0.2);
+                                pos.execute(flg);
+                            }
+                        } catch (e) {
+                            console.error(e.stack);
+                            throw e;
+                        }
+                    }
+                )
+            );
+            
+            if ('number' === typeof prm.height()) {
+                this.child()[1].style({
+                    'position' : 'relative',
+                    'top'      : '-' + prm.height() + 'px'
                 });
             }
-            return ret;
+            
+            this.child()[0].addChild(prm);
         } catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
     
-    setSizeComp (cmp) {
+    offset (prm) {
         try {
-            if (this.child()[0].getId() === cmp.getId()) {
-                return;
+            let off = this.child()[1].child()[0];
+            if (undefined === prm) {
+                /* getter */
+                return mf.func.getLength(
+                    off.style('top')
+                );
             }
-            super.setSizeComp(cmp);
+            /* setter */
+            off.size(this.width(), prm);
         } catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
     
-    getClickEvent () {
+    zIndex (prm) {
         try {
-            if (1 === this.child().length) {
-                return new mofron.event.Click();
+            if (undefined === prm) {
+                /* getter */
+                return this.style('z-index');
             }
-            return super.getClickEvent();
-        } catch (e) {
-            console.error(e.stack);
-            throw e;
-        }
-    }
-    
-    selectIdx (idx, evt) {
-        try {
-            let ret = super.selectIdx(idx, evt);
-            if (undefined !== ret) {
-                return ret - 1;
+            /* setter */
+            if ('number' !== typeof prm) {
+                throw new Error('invalid parameter');
+            }
+            
+            this.style({
+                'z-index' : prm
+            });
+            
+            let idx_cmp = this.switch();
+            if (0 < idx_cmp.length) {
+                for (let iidx in idx_cmp) {
+                    idx_cmp[iidx].style({
+                        'position' : 'relative',
+                        'z-index'  : prm
+                    });
+                }
             }
         } catch (e) {
             console.error(e.stack);
@@ -167,5 +193,5 @@ mofron.comp.SlideMenu = class extends mofron.comp.Menu {
         }
     }
 }
-mofron.comp.slidemenu = {};
 module.exports = mofron.comp.SlideMenu;
+/* end of file */
