@@ -1,7 +1,7 @@
 {
   "name": "mofron-comp-slidemenu",
-  "version": "0.1.0",
-  "description": "slide-menu component for mofron",
+  "version": "0.2.0",
+  "description": "slide menu component for mofron",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,14 +11,19 @@
     "url": "git+https://github.com/simpart/mofron-comp-slidemenu.git"
   },
   "dependencies": {
+    "mofron-event-clkfocus" : "",
     "mofron-effect-position" : "",
-    "mofron-event-focus"     : ""
+    "mofron-effect-border" : "",
+    "mofron-effect-hrzpos" : "",
+    "mofron-event-click" : "",
+    "mofron-comp-menu" : "",
+    "mofron-comp-text" : ""
   },
   "keywords": [
     "mofron"
   ],
   "author": "simparts",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/simpart/mofron-comp-slidemenu/issues"
   },

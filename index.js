@@ -1,18 +1,27 @@
 /**
- * @file   mofron-comp-slidemenu/index.js
+ * @file mofron-comp-slidemenu/index.js
+ * @brief slide menu component for mofron
  * @author simpart
  */
-let mf = require('mofron');
-let Focus = require('mofron-event-focus');
-let Posit = require('mofron-effect-position');
-let Menu = require('mofron-comp-menu');
+const mf = require('mofron');
+const Focus = require('mofron-event-clkfocus');
+const Position = require('mofron-effect-position');
+const Border = require('mofron-effect-border');
+const HrzPos = require('mofron-effect-hrzpos');
+const Click = require('mofron-event-click');
+const Menu = require('mofron-comp-menu');
+const Text = require('mofron-comp-text');
 
-/**
- * @class mofron.comp.SlideMenu
- * @brief slide-menu component for mofron
- */
-mofron.comp.SlideMenu = class extends Menu {
-    
+let sm_open   = new Position({ eid: 0, tag: "SlideMenu-open"  });
+let sm_close  = new Position({ eid: 1, tag: "SlideMenu-close" });
+let sm_border = new Border({ tag: "SlideMenu", color: [190,190,190] });
+
+mofron.comp.SlideMenu = class extends mf.Component {
+    /**
+     * initialize component
+     *
+     * @type private
+     */
     constructor (po) {
         try {
             super();
@@ -25,169 +34,269 @@ mofron.comp.SlideMenu = class extends Menu {
     }
     
     /**
-     * initialize vdom
+     * initialize dom contents
      * 
-     * @param prm : (string) text contents
+     * @type private
      */
-    initDomConts (prm) {
+    initDomConts () {
         try {
             super.initDomConts();
-            this.target().style({'height' : '100%',});
+            this.style({ "display" : "flex" });
             
-            /* menu switch */
-            this.addChild(new mf.Component(), undefined, false);
-
-            /* contents */
-            let posit = new Posit({
-                type      : ['relative', 'left'],
-                defStatus : false
-            });
-            let conts = new mf.Component({
-                height    : '100%',
-                style     : {
-                    'border-right' : 'solid 1px rgb(190,190,190)'
-                },
-                addChild  : new mf.Component({  /* offset */
-                    style : {'margin-top' : '1px'}
-                }),
-                addEffect : posit
-            });
-            this.addChild(conts, undefined, false);
-            this.target(conts.target());
-            this.width(250);
-
-            posit.value([
-                ('number' === typeof this.width()) ? (0 - this.width()) : '-'+this.width(),
-                0
-            ]);
+            /* set default switch */
+            this.switch(
+                new Text({ text: '&equiv;', size: '0.4rem' })
+            );
+            this.child([this.switch(), this.menu()]);
             
-            this.color(new mf.Color(255,255,255));
-            
-            
+            this.target(this.menu().target());
+            this.styleTgt(this.target());
+            this.eventTgt(this.target());
         } catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
     
-    height (prm) {
+    /**
+     * set height, color
+     *
+     * @type private
+     */
+    beforeRender () {
         try {
-            if (undefined === prm) {
-                /* getter */
-                return (undefined === this.m_height) ? null : this.m_height;
-            }
-            /* setter */
-            if ( ('number' !== typeof prm) && ('string' !== typeof prm) ) {
-                throw new Error('invalid parameter');
-            }
-            this.m_height = prm;
-            this.setMenuConf();
+            super.beforeRender();
+            this.style({ "height" : "100%" });
         } catch (e) {
             console.error(e.stack);
             throw e;
         }
     }
     
-    setMenuConf (cmp) {
-        try {
-            if (undefined === cmp) {
-                /* set all contents */
-                let chd = this.child()[1].child();
-                for (let cidx in chd) {
-                    if (0 === cidx) {
-                        continue;
-                    }
-                    super.setMenuConf(chd[cidx]);
-                }
-            } else {
-                super.setMenuConf(cmp);
-            }
-        } catch (e) {
-            console.error(e.stack);
-            throw e;
-        }
-    }
-    
+    /**
+     * switch component
+     * it displays menu if the switch is clicked
+     *
+     * @param (component) switch component
+     * @return (component) switch component
+     * @type parameter
+     */
     switch (prm) {
         try {
-            if (undefined === prm) {
-                /* getter */
-                return this.child()[0].child();
-            }
-            let sld = this;
-            prm.addEvent(
-                new Focus(
-                    (flg, tgt) => {
-                        try {
-                            let pos = sld.child()[1].getConfig('effect', 'Position');
-                            if (null !== pos) {
-                                pos.speed(0.2);
-                                pos.execute(flg);
-                            }
-                        } catch (e) {
+            if (true === mf.func.isComp(prm)) {
+                let sd = this;
+                prm.event(new Focus(
+                    (p1,p2) => {
+                        try { setTimeout(() => { sd.slidemng(p2); }, 50); } catch (e) {
                             console.error(e.stack);
                             throw e;
                         }
                     }
-                )
-            );
-            
-            if ('number' === typeof prm.height()) {
-                this.child()[1].style({
-                    'position' : 'relative',
-                    'top'      : '-' + prm.height() + 'px'
+                ));
+                prm = new mf.Component({
+                          effect: [
+                              new HrzPos({
+                                  type: this.position(), offset: "0.2rem", tag: "SlideMenu"
+                              })
+                          ],
+                          style:{ "display":"flex" }, child: prm
+                      });
+            }
+            return this.innerComp("switch", prm, mf.Component);
+        } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    /**
+     * menu component
+     *
+     * @param (component) menu component
+     * @return (component) menu component
+     * @type parameter
+     */
+    menu (prm) {
+        try {
+            if (true === mf.func.isComp(prm, "Menu")) {
+                /* set effect option */
+                sm_open.direction(this.position());
+                sm_close.direction(this.position());
+                sm_border.type(("left" === this.position()) ? "right" : "left");
+                prm.option({
+                    effect: [ sm_border, sm_open, sm_close ],
+                    style: { "position":"fixed", "top" : "0rem" },
+                    visible: false
                 });
-            }
-            
-            this.child()[0].addChild(prm);
-        } catch (e) {
-            console.error(e.stack);
-            throw e;
-        }
-    }
-    
-    offset (prm) {
-        try {
-            let off = this.child()[1].child()[0];
-            if (undefined === prm) {
-                /* getter */
-                return mf.func.getLength(
-                    off.style('top')
-                );
-            }
-            /* setter */
-            off.size(this.width(), prm);
-        } catch (e) {
-            console.error(e.stack);
-            throw e;
-        }
-    }
-    
-    zIndex (prm) {
-        try {
-            if (undefined === prm) {
-                /* getter */
-                return this.style('z-index');
-            }
-            /* setter */
-            if ('number' !== typeof prm) {
-                throw new Error('invalid parameter');
-            }
-            
-            this.style({
-                'z-index' : prm
-            });
-            
-            let idx_cmp = this.switch();
-            if (0 < idx_cmp.length) {
-                for (let iidx in idx_cmp) {
-                    idx_cmp[iidx].style({
-                        'position' : 'relative',
-                        'z-index'  : prm
+                /* set color */
+                if (undefined !== this.innerComp()["menu"]) {
+                    prm.option({
+                       baseColor: this.mainColor(),
+                       accentColor: this.accentColor(),
                     });
+                    let bs_clr = this.baseColor();
+                    if (undefined !== bs_clr) {
+                        prm.style({ background: bs_clr[0] }, bs_clr[1]);
+                    }
+                }
+                /* set slide width */
+                let wid = (null !== prm.width()) ? prm.width() : this.width();
+                if (null === wid) {
+                    wid = "2rem";
+                }
+                sm_open.value("-" + wid, "0rem");
+                sm_close.value("0rem", "-" + wid);
+                
+                /* set slide action */
+                let sd = this;
+                prm.event(
+                    new Click({
+                        handler: () => {
+                            sd.slidemng(true);
+                            let fcs = sd.switch().child()[0].event("ClkFocus").clickFlag();
+                            if (false === fcs) {
+                                sd.switch().child()[0].event("ClkFocus").clickFlag(true);
+                            } else {
+                                sd.slidemng(null);
+                            }
+                        },
+                        pointer: false
+                    })
+                );
+                prm.selectEvent(() => {
+                    setTimeout(
+                        () => {
+                            sd.slidemng(false);
+                            sd.switch().child()[0].event("ClkFocus").focusSts(false);
+                        },
+                        80
+                    );
+                });
+                /* set default background */
+                prm.style(
+                    { "background": "rgb(255,255,255)" },
+                    { loose:true }
+                );
+                /* replace target */
+                if (undefined !== this.innerComp()["menu"]){
+                    this.target(prm.target());
+                    this.styleTgt(prm.target());
+                    this.eventTgt(prm.target());
                 }
             }
+            return this.innerComp("menu", prm, Menu);
         } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    /**
+     * menu items
+     *
+     * @param (array) menu item components
+     * @return (array) menu item components
+     * @type parameter
+     */
+    item (prm) {
+        try { return this.menu().item(prm); } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    /**
+     * slide action manager
+     *
+     * @type private
+     */
+    slidemng (prm) {
+        try {
+            if ( ('boolean' === typeof prm) && (null !== this.slidemng()) ) {
+                if ( (false === prm) || (prm !== this.menu().visible())) {
+                    this.menu().visible(prm);
+                }
+            }
+            return this.member("slidemng", "boolean", prm, false);
+        } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    /**
+     * position type
+     *
+     * @param (string) position type ["left","right"]
+     * @return (string) position type
+     * @type parameter
+     */
+    position (prm) {
+        try {
+            if (undefined !== prm) {
+                /* set switch position */
+                this.switch().effect(["HrzPos","SlideMenu"]).type(prm);
+                /* set menu position */
+                sm_open.direction(prm);
+                sm_close.direction(prm);
+                sm_border.type(("left" !== prm) ? "left" : "right");
+            }
+            return this.member("position", ["left","right"], prm, "left");
+        } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    /**
+     * background color of menu items
+     *
+     * @param (string/array) string: color name, #hex
+     *                       array: [r,g,b,[a]]
+     *                       array: [color string, option]
+     * @return (string) color name, #hex
+     * @type parameter
+     */
+    mainColor (prm) {
+        try { return this.menu().baseColor(prm); } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    /**
+     * background color of menu
+     *
+     * @param (string/array) string: color name, #hex
+     *                       array: [r,g,b,[a]]
+     *                       array: [color string, option]
+     * @return (string) color name, #hex
+     * @type parameter
+     */
+    baseColor (prm) {
+        try {
+            if (undefined === prm) {
+                return this.m_bsclr;
+            }
+            this.m_bsclr = ("string" === typeof prm) ? [prm, undefined] : prm;
+            this.menu().tgtColor('background', this.m_bsclr);
+        } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    /**
+     * accent color of menu item
+     *
+     * @param (string/array) string: color name, #hex
+     *                       array: [r,g,b,[a]]
+     *                       array: [color string, option]
+     * @return (string) color name, #hex
+     * @type parameter
+     */
+    accentColor (prm) {
+        try { return this.menu().accentColor(prm); } catch (e) {
             console.error(e.stack);
             throw e;
         }
