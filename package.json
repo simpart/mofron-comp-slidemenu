@@ -1,6 +1,6 @@
 {
   "name": "mofron-comp-slidemenu",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "slide menu component for mofron",
   "main": "index.js",
   "scripts": {
@@ -15,12 +15,13 @@
     "mofron-effect-position" : "",
     "mofron-effect-border" : "",
     "mofron-effect-hrzpos" : "",
+    "mofron-effect-syncwid" : "",
     "mofron-event-click" : "",
     "mofron-comp-menu" : "",
     "mofron-comp-text" : ""
   },
   "keywords": [
-    "mofron"
+    "front-end"
   ],
   "author": "simparts",
   "license": "MIT",
