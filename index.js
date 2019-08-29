@@ -299,6 +299,36 @@ mofron.comp.SlideMenu = class extends mf.Component {
             throw e;
         }
     }
+    
+    /**
+     * menu height
+     * 
+     * @param (string (size)) menu height
+     * @param (option) style option
+     * @return (string) menu height
+     * @type parameter
+     */
+    height (prm, opt) {
+        try { return this.menu().height(prm, opt); } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
+    
+    /**
+     * menu width
+     * 
+     * @param (string (size)) menu width
+     * @param (option) style option
+     * @return (string) menu width
+     * @type parameter
+     */
+    width (prm, opt) {
+        try { return this.menu().width(prm, opt); } catch (e) {
+            console.error(e.stack);
+            throw e;
+        }
+    }
 }
 module.exports = mofron.comp.SlideMenu;
 /* end of file */
