@@ -32,13 +32,13 @@ npm install mofron mofron-comp-slidemenu
 | | menu | component | menu component |
 | | item | array | menu item components |
 | | position | string | position type ["left","right"] |
-| | mainColor | string/array | string: color name, #hex |
-| | | | array: [r,g,b,[a]] |
-| | | | array: [color string, option] |
-| | baseColor | string/array | string: color name, #hex |
-| | | | array: [r,g,b,[a]] |
-| | | | array: [color string, option] |
-| | accentColor | string/array | string: color name, #hex |
-| | | | array: [r,g,b,[a]] |
-| | | | array: [color string, option] |
+| | mainColor | mixed (color) | string: color name, #hex |
+| | | | array: [red, green, blue, (alpha)] |
+| | | option | style option |
+| | baseColor | mixed (color) | string: color name, #hex |
+| | | | array: [red, green, blue, (alpha)] |
+| | | option | style option |
+| | accentColor | mixed (color) | string: color name, #hex |
+| | | | array: [red, green, blue, (alpha)] |
+| | | option | style option |
 

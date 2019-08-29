@@ -253,14 +253,14 @@ mofron.comp.SlideMenu = class extends mf.Component {
     /**
      * background color of menu items
      *
-     * @param (string/array) string: color name, #hex
-     *                       array: [r,g,b,[a]]
-     *                       array: [color string, option]
-     * @return (string) color name, #hex
+     * @param (mixed (color)) string: color name, #hex
+     *                        array: [red, green, blue, (alpha)]
+     * @param (option) style option
+     * @return (string) menu item background color
      * @type parameter
      */
-    mainColor (prm) {
-        try { return this.menu().baseColor(prm); } catch (e) {
+    mainColor (prm, opt) {
+        try { return this.menu().baseColor(prm, opt); } catch (e) {
             console.error(e.stack);
             throw e;
         }
@@ -269,15 +269,15 @@ mofron.comp.SlideMenu = class extends mf.Component {
     /**
      * background color of menu
      *
-     * @param (string/array) string: color name, #hex
-     *                       array: [r,g,b,[a]]
-     *                       array: [color string, option]
-     * @return (string) color name, #hex
+     * @param (mixed (color)) string: color name, #hex
+     *                        array: [red, green, blue, (alpha)]
+     * @param (option) style option
+     * @return (string) menu background color
      * @type parameter
      */
-    baseColor (prm) {
+    baseColor (prm, opt) {
         try {
-            return mf.func.cmpColor(this.menu().parent(), "background", prm);
+            return mf.func.cmpColor(this.menu().parent(), "background", [prm,opt]);
         } catch (e) {
             console.error(e.stack);
             throw e;
@@ -286,15 +286,15 @@ mofron.comp.SlideMenu = class extends mf.Component {
     
     /**
      * accent color of menu item
-     *
-     * @param (string/array) string: color name, #hex
-     *                       array: [r,g,b,[a]]
-     *                       array: [color string, option]
-     * @return (string) color name, #hex
+     * 
+     * @param (mixed (color)) string: color name, #hex
+     *                        array: [red, green, blue, (alpha)]
+     * @param (option) style option
+     * @return (string) menu item accent color
      * @type parameter
      */
-    accentColor (prm) {
-        try { return this.menu().accentColor(prm); } catch (e) {
+    accentColor (prm, opt) {
+        try { return this.menu().accentColor(prm,opt); } catch (e) {
             console.error(e.stack);
             throw e;
         }
