@@ -1,7 +1,7 @@
 # mofron-comp-slidemenu
 [mofron](https://mofron.github.io/mofron/) is module based frontend framework.
 
-slide menu component for mofron
+slidemenu component for mofron
 
 
 # Install
@@ -24,21 +24,14 @@ npm install mofron mofron-comp-slidemenu
     </item>
 </SlideMenu>
 ```
+
 # Parameter
 
-|Simple<br>Param | Parameter Name | Type | Description |
-|:--------------:|:---------------|:-----|:------------|
-| | switch | component | switch component |
-| | menu | component | menu component |
-| | item | array | menu item components |
-| | position | string | position type ["left","right"] |
-| | mainColor | mixed (color) | string: color name, #hex |
+| Short<br>Form | Parameter Name | Type | Description |
+|:-------------:|:---------------|:-----|:------------|
+| | position | string | left: slides from the left side [default] |
+| | | | right: slides from the right side |
+| | baseColor | mixed(color) | string: background color name, #hex |
 | | | | array: [red, green, blue, (alpha)] |
-| | | option | style option |
-| | baseColor | mixed (color) | string: color name, #hex |
-| | | | array: [red, green, blue, (alpha)] |
-| | | option | style option |
-| | accentColor | mixed (color) | string: color name, #hex |
-| | | | array: [red, green, blue, (alpha)] |
-| | | option | style option |
+| | | dict | style option |
 
