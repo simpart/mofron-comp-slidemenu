@@ -1,10 +1,17 @@
 <require>
+    <tag module="mofron-comp-text">Text</tag>
     <tag module="mofron-comp-slidemenu">SlideMenu</tag>
     <tag module="mofron-comp-txtframe">TxtFrame</tag>
 </require>
 
-<SlideMenu size=2rem,1rem mainColor=#e6e6fa>
-    <item>
+<script name=sw run=init>
+slide.visible(true);
+</script>
+
+<Text event=Click:@sw size=0.3rem>&equiv;</Text>
+
+<SlideMenu name=slide offset=-0.01rem base-color="#f0e6fa" position=right>
+    <item size=(1.5rem,0.5rem)>
         <TxtFrame>menu 1</TxtFrame>
         <TxtFrame>menu 2</TxtFrame>
         <TxtFrame>menu 3</TxtFrame>
