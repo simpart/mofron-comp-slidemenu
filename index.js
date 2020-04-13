@@ -56,7 +56,7 @@ module.exports = class extends Menu {
 
             /* set default config */
             this.config({
-                style: { "position": "fixed", "top": "0rem" },
+                style: { "position": "fixed", "top": "0rem", "z-index": "999" },
 		event: new Focus({ tag: "SlideMenu", listener: fcs, pointer: false }),
 		effect: [
 		    new Border(),
@@ -70,6 +70,8 @@ module.exports = class extends Menu {
 	    let disp = (d1,d2,d3) => {
 		if ("none" !== d2[0]) {
 		    setTimeout(() => { d3.event({ name: "ClkFocus", tag: "SlideMenu" }).status(true); }, 50);
+		} else {
+                    setTimeout(() => { d3.event({ name: "ClkFocus", tag: "SlideMenu" }).status(false); }, 50);
 		}
 	    }
 	    this.styleDom().style().listener("display",disp,this);
